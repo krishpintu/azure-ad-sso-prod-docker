@@ -5,7 +5,26 @@ This project contains a minimal example of Azure AD SSO integration with Node.js
 ---
 
 ## Project structure
+```
+azure-ad-sso-prod/
+├── backend/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── server.js
+│   └── .env.example
+├── frontend/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/
+│   │   ├── index.js
+│   │   └── App.js
+├── nginx/
+│   ├── nginx.conf
+│   └── certs/  (place your SSL certs here)
+├── docker-compose.yml
+└── README.md
 
+```
 
 
 ## Setup
@@ -21,4 +40,5 @@ This project contains a minimal example of Azure AD SSO integration with Node.js
 ```bash
 docker-compose up --build
 
+````
 5. Access the frontend on https://yourdomain.com
