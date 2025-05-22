@@ -4,6 +4,10 @@ This project contains a minimal example of Azure AD SSO integration with Node.js
 
 ---
 
+## Project structure
+
+
+
 ## Setup
 
 1. Copy `.env.example` to `.env` in `backend/` and fill in your Azure AD credentials.
@@ -16,3 +20,5 @@ This project contains a minimal example of Azure AD SSO integration with Node.js
 
 ```bash
 docker-compose up --build
+
+5. Access the frontend on https://yourdomain.com
