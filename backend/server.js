@@ -9,7 +9,6 @@ const port = process.env.PORT || 4000;
 
 app.use(express.json());
 
-// Setup JWKS client to get signing keys
 const client = jwksClient({
   jwksUri: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/discovery/v2.0/keys`
 });
@@ -25,7 +24,6 @@ function getKey(header, callback) {
   });
 }
 
-// Middleware to verify JWT token
 function checkJwt(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.replace('Bearer ', '');
@@ -43,20 +41,25 @@ function checkJwt(req, res, next) {
       return res.status(401).json({ error: 'Token invalid', details: err.message });
     }
     req.user = decoded;
+
+    // RBAC: check if user is in allowed group
+    const allowedGroupId = process.env.ALLOWED_GROUP_ID;
+    if (allowedGroupId) {
+      if (!decoded.groups || !decoded.groups.includes(allowedGroupId)) {
+        return res.status(403).json({ error: 'Access denied: user not in allowed group' });
+      }
+    }
+
     next();
   });
 }
 
-// Protected API route example
 app.get('/api/profile', checkJwt, async (req, res) => {
   try {
-    // Fetch user profile from Microsoft Graph API
     const accessToken = req.headers.authorization.replace('Bearer ', '');
 
     const graphRes = await axios.get('https://graph.microsoft.com/v1.0/me', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+      headers: { Authorization: `Bearer ${accessToken}` }
     });
 
     res.json({ profile: graphRes.data });
@@ -65,7 +68,6 @@ app.get('/api/profile', checkJwt, async (req, res) => {
   }
 });
 
-// Public test route
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from backend!' });
 });
